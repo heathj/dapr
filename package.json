@@ -13,7 +13,6 @@
     "css-loader": "^3.5.3",
     "express": "^4.16.4",
     "frida": "^12.9.2",
-    "frida-compile": "^9.3.0",
     "int64-buffer": "^0.99.1007",
     "jsonwebtoken": "^8.5.1",
     "lokijs": "^1.5.8",
