@@ -2,14 +2,14 @@ import { hook } from "./hook";
 import { SyscallType } from "../../shared/types/syscalls";
 export const hookClose = (libcModule: Module) => {
   hook(libcModule, "close", {
-    onEnter: function(
+    onEnter: function (
       this: InvocationContext,
       args: InvocationArguments
     ): void {
       this.start = new Date().getTime();
       this.fd = args[0].toInt32();
     },
-    onLeave: function(
+    onLeave: function (
       this: InvocationContext,
       retval: InvocationReturnValue
     ): void {
@@ -18,8 +18,8 @@ export const hookClose = (libcModule: Module) => {
         fd: this.fd,
         retval: retval.toInt32(),
         start: this.start,
-        end: new Date().getTime()
+        end: new Date().getTime(),
       });
-    }
+    },
   });
 };

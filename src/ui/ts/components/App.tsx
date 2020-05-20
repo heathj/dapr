@@ -8,7 +8,7 @@ import {
   useResizeColumns,
   HeaderGroup,
   TableInstance,
-  ColumnInstance
+  ColumnInstance,
 } from "react-table";
 
 /*import * as thrift from "thrift/lib/nodejs/lib/thrift/browser";

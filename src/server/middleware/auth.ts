@@ -7,7 +7,7 @@ import { daprTokenName } from "../../shared/util/token";
 import { User } from "../../shared/types/user";
 
 const getPubKey = async (): Promise<Buffer | null> =>
-  await new Promise(res =>
+  await new Promise((res) =>
     fs.readFile(pubKey, (err: NodeJS.ErrnoException | null, data: Buffer) => {
       if (err !== null) {
         res(null);
@@ -40,23 +40,11 @@ export const isAuthenticated = async (
     res.status(500).end();
     return;
   }
-  const user: User | null = await new Promise(res => {
-    jwt.verify(
-      dapr,
-      cert,
-      (err: jwt.VerifyErrors, decoded: object | string): void => {
-        if (err !== null) {
-          console.error(err);
-          res(null);
-        }
-        res(decoded as User);
-      }
-    );
-  });
-  if (user === null) {
+  const user = jwt.verify(dapr, cert);
+  if (!user) {
     res.status(403).end();
     return;
   }
-  req.user = user;
+  req.user = Object.assign({}, { name: "", expired: -1 }, user);
   next();
 };

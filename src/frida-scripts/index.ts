@@ -37,6 +37,5 @@ rpc.exports = {
         return null;
       }
       return sendIoctl(module.name, syscall.fd, syscall.request, syscall.data);
-    })
+    }),
 };
-console.log("LOADED!");

@@ -1,8 +1,6 @@
-#!/usr/bin/env node
-
 import * as program from "commander";
 import { start, quit } from "./server";
-import {genJWTKeys} from "../shared/util/keys"
+import { genJWTKeys } from "../shared/util/keys";
 import * as process from "process";
 const DEFAULT_PORT = 8888;
 
@@ -12,7 +10,7 @@ program
   .option("-A, --adb", "Connect to a device via ADB")
   .option("-p, --port <port>", "Set the port to listen on", DEFAULT_PORT)
   .parse(process.argv);
-genJWTKeys()
-const server = start(program.port)
+genJWTKeys();
+const server = start(program.port);
 process.on("SIGTERM", () => quit(server));
 process.on("SIGINT", () => quit(server));
