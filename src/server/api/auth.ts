@@ -4,7 +4,7 @@ import { memoize } from "lodash";
 import * as fs from "fs";
 import { privKey } from "../../shared/util/keys";
 const getSecretKey = async (): Promise<jwt.Secret | null> =>
-  await new Promise(res =>
+  await new Promise((res) =>
     fs.readFile(privKey, (err: NodeJS.ErrnoException | null, data: Buffer) => {
       if (err !== null) {
         res(null);
@@ -16,6 +16,7 @@ const getSecretKey = async (): Promise<jwt.Secret | null> =>
 
 const memoGetSecretKey = memoize(getSecretKey);
 export const authenticate = async (req: Request, res: Response) => {
+  console.log("!!");
   const { password } = req.body;
   if (password !== "root") {
     res.status(403).end();
@@ -34,8 +35,8 @@ export const authenticate = async (req: Request, res: Response) => {
       JSON.stringify({
         token: jwt.sign({ name: "root" }, secret, {
           algorithm: "RS256",
-          expiresIn: "7d"
-        })
+          expiresIn: "7d",
+        }),
       })
     );
 };

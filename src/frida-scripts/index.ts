@@ -2,6 +2,7 @@ import { first, map } from "lodash";
 import { getLibcModules, installHooks } from "./init-libc";
 import { sendIoctl, IoctlResponse } from "./send-ioctl";
 import { Syscall, SyscallType } from "../shared/types/syscalls";
+
 rpc.exports = {
   hook: (): void => {
     const libcModules = getLibcModules();

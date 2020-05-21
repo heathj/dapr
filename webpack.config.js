@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const NodemonPlugin = require("nodemon-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const srcPath = [__dirname, "src"];
 const tsPath = [...srcPath, "ui", "ts"];
@@ -9,6 +10,7 @@ const htmlPath = [...srcPath, "ui", "html"];
 const config = (mode) => {
   const isDevelopment = mode === "development";
   const uiConfig = {
+    stats: "errors-warnings",
     watch: isDevelopment ? true : false,
     devtool: isDevelopment ? "source-map" : "",
     mode: mode,
@@ -18,6 +20,18 @@ const config = (mode) => {
     output: {
       path: path.join(__dirname, "build"),
       filename: "[name].bundle.js",
+    },
+    devServer: {
+      host: "localhost",
+      port: 3000,
+      contentBase: "./build",
+      writeToDisk: true,
+      proxy: {
+        "/": {
+          target: "http://localhost:8888/",
+          secure: false,
+        },
+      },
     },
     module: {
       rules: [
@@ -96,6 +110,7 @@ const config = (mode) => {
       new webpack.DefinePlugin({
         DEV: isDevelopment,
       }),
+      new NodemonPlugin({ nodeArgs: ["--inspect=9222"] }),
     ],
     externals: [nodeExternals()],
   };

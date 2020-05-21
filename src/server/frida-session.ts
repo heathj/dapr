@@ -1,13 +1,14 @@
 import * as fs from "fs";
 import * as frida from "frida";
-import { Session } from "frida/dist/session";
-import { Script, ScriptMessageHandler } from "frida/dist/script";
+
+//import { Session } from "frida/dist/session";
+//import { Script, ScriptMessageHandler } from "frida/dist/script";
 import { defaultTo, memoize } from "lodash";
 import { User } from "../shared/types/user";
 
 interface Installation {
-  session: Session;
-  script: Script;
+  session: frida.Session;
+  script: frida.Script;
 }
 
 const sessions: { [key: string]: Installation } = {};
@@ -22,7 +23,7 @@ export const getFridaSession = (user: User, pid: number): Installation | null =>
 // and returns it as a string.
 const getFridaScript = async (): Promise<string | null> => {
   const scriptPath = "./bin/ioctler.js";
-  return await new Promise(res =>
+  return await new Promise((res) =>
     fs.readFile(
       scriptPath,
       "utf8",
@@ -39,10 +40,10 @@ const getFridaScript = async (): Promise<string | null> => {
 // loadScript creates the RPC script that is used to collect
 // information about the process syscalls.
 const loadScript = async (
-  session: Session,
-  callback: ScriptMessageHandler,
+  session: frida.Session,
+  callback: frida.ScriptMessageHandler,
   onAttach: Function
-): Promise<Script | null> => {
+): Promise<frida.Script | null> => {
   const scriptContents = await memoGetFridaScript();
   if (scriptContents === null) {
     return null;
@@ -62,10 +63,10 @@ export const install = async (
   user: User,
   pid: number,
   adb: boolean,
-  onMessage: ScriptMessageHandler,
+  onMessage: frida.ScriptMessageHandler,
   onAttach: Function
 ): Promise<Installation | null> => {
-  let device: { attach(pid: number): Promise<Session> } = frida;
+  let device: { attach(pid: number): Promise<frida.Session> } = frida;
   if (adb) {
     device = await frida.getUsbDevice({ timeout: 1000 });
   }
@@ -84,9 +85,9 @@ export const install = async (
 };
 
 const attach = async (
-  device: { attach(pid: number): Promise<Session> },
+  device: { attach(pid: number): Promise<frida.Session> },
   pid: number
-): Promise<Session | null> => {
+): Promise<frida.Session | null> => {
   try {
     return await device.attach(pid);
   } catch (e) {

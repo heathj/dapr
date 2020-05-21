@@ -30,10 +30,10 @@ export const start = (port: number): HTTPServer => {
   const app = express();
 
   app.use(bodyParser.json());
-  app.use(corsSettings);
-  app.use(dnsRebinding);
-  app.post("/auth", authenticate);
-  app.use(isAuthenticated);
+  //app.use(corsSettings);
+  //app.use(dnsRebinding);
+  //app.post("/auth", authenticate);
+  //app.use(isAuthenticated);
   app.get("/procs", getProcs);
   //app.get("/session/status", sessionStatus);
   //app.use("/*", isStatusPending);
@@ -81,7 +81,7 @@ export const start = (port: number): HTTPServer => {
   const wsServer = new WSServer({ server: httpServer });
   httpServer.on("request", app);
   wsServer.on("connection", wsHandler);
-  return httpServer.listen(port, () => console.log("started!"));
+  return httpServer.listen(port, () => console.log("started!!"));
 };
 
 export const quit = async (server: HTTPServer): Promise<void> => {

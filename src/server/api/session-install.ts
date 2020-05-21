@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { install } from "../frida-session";
 import { events } from "../store/db";
-import { ScriptMessageHandler, Message, MessageType } from "frida/dist/script";
+import { ScriptMessageHandler, Message, MessageType } from "frida";
 import { memoResolveFileDescriptor } from "../../shared/util/procs";
 import { defaultTo } from "lodash";
 import { getWebSocket } from "../websocket";
@@ -64,7 +64,7 @@ const onFridaMessage = (pid: number, adb: boolean): ScriptMessageHandler => (
         driverName: defaultTo(
           memoResolveFileDescriptor(pid, event.fd, adb),
           `<unknown:${event.fd}>`
-        )
+        ),
       });
       const ws = getWebSocket();
       if (ws !== null) {
