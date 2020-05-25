@@ -1,5 +1,5 @@
-import { eventsReducer } from "./events-reducer";
 import { combineReducers } from "redux";
+import { procs } from "../reducers/procs";
 
-export const rootReducer = combineReducers({ eventsReducer });
+export const rootReducer = combineReducers({ procs });
 export type RootState = ReturnType<typeof rootReducer>;

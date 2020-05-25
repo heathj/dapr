@@ -19,9 +19,11 @@
     "ps-list": "^6.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-hot-loader": "^4.12.21",
     "react-redux": "^7.2.0",
     "react-table": "^7.1.0",
     "redux": "^4.0.5",
+    "styled-components": "^5.1.0",
     "typesafe-actions": "^5.1.0",
     "ws": "^7.2.1"
   },
@@ -38,7 +40,10 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-redux": "^7.1.8",
     "@types/react-table": "^7.0.17",
+    "@types/styled-components": "^5.1.0",
+    "@types/webpack-env": "^1.15.2",
     "@types/ws": "^6.0.4",
+    "concurrently": "^5.2.0",
     "html-webpack-plugin": "^4.3.0",
     "nodemon-webpack-plugin": "^4.3.1",
     "source-map-loader": "^0.2.4",
@@ -51,7 +56,10 @@
     "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
-    "start": "npx webpack-dev-server --config webpack.config.js --mode development",
+    "start": "npx concurrently 'npm:start-ui' 'npm:start-server' 'npm:start-frida'",
+    "start-ui": "npx webpack-dev-server --config webpack.config.js --config-name ui --mode development",
+    "start-server": "npx webpack --config webpack.config.js --config-name server --mode development",
+    "start-frida": "npx webpack --config webpack.config.js  --config-name frida --mode development",
     "build": "npx webpack --config webpack.config.js --mode production"
   }
 }

@@ -1,7 +1,7 @@
 /*  global Auth */
 
 import * as React from "react";
-import "../styles/App.css";
+
 import {
   useTable,
   useBlockLayout,
@@ -160,35 +160,8 @@ import {
    };*/
 //import { Event } from "../types/event";
 import ProcessSelector from "./ProcessSelector";
-import { EventsTable } from "../containers/event-table";
-
-const App = () => {
-  return (
-    <div className="root">
-      <div className="sidebar">
-        <ul className="sidebarFeatures">
-          <li>Proxy</li>
-          <li>Repeater</li>
-          <li>Structs</li>
-        </ul>
-        <ul className="sidebarPreferences">
-          <li>Settings</li>
-        </ul>
-      </div>
-      <div className="dataTable">
-        <ProcessSelector clearTableData={() => console.log("clearing data")} />
-        <textarea />
-        <EventsTable />
-      </div>
-      <div className="detailsViews">
-        <div className="hexViewer">hex viewer</div>
-        <div className="structDetails">
-          <div className="structViewer">struct viewer</div>
-          <div className="structEditor">struct editor</div>
-        </div>
-      </div>
-    </div>
-  );
+import { hot } from "react-hot-loader/root";
+export const App = () => {
+  return <ProcessSelector />;
 };
-
-export default App;
+export const HotApp = hot(App);

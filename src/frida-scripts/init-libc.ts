@@ -8,6 +8,7 @@ import { hookOpenGeneric } from "./hooks/hook-open-generic";
 
 export const getLibcModules = (): Module[] =>
   filter(Process.enumerateModules(), (m: Module): boolean => {
+    console.log("module names", m.name);
     const matches = m.name.match(/^libc[\.\-]/);
     if (matches === null) {
       return false;

@@ -9,6 +9,14 @@
       "request": "attach",
       "name": "Attach to nodemon",
       "port": 9222
+    },
+    {
+      "name": "Launch firefox debugger",
+      "type": "firefox",
+      "request": "launch",
+      "reAttach": true,
+      "url": "http://localhost:3000/index.html",
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }

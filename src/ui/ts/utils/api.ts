@@ -1,26 +1,28 @@
-export const uninstall = async (pid: string): Promise<Response> =>
-  await authedFetch(`http://localhost:8888/session/uninstall`, {
+export const uninstall = async (pid: number): Promise<Response> =>
+  await jsonFetch(`/session/uninstall`, {
     method: "POST",
-    body: JSON.stringify({ pid: pid })
+    body: JSON.stringify({ pid: pid }),
   });
 
 export const install = async (pid: number): Promise<Response> =>
-  await authedFetch(`http://localhost:8888/session/install`, {
+  await jsonFetch(`/session/install`, {
     method: "POST",
-    body: JSON.stringify({ pid: pid, adb: false })
+    body: JSON.stringify({ pid, adb: false }),
   });
 
-export const fetchCurrentProcesses = async (): Promise<any> => {
-  const respJSON = await authedFetch(`http://localhost:8888/procs`);
-  return await respJSON.json();
+import { Process } from "../../../shared/types/procs";
+export const fetchCurrentProcesses = async (): Promise<Process[]> => {
+  const respJSON = await jsonFetch(`/procs`);
+  const data: Process[] = await respJSON.json();
+  return data;
 };
 
 export const daprTokenName = "dapr";
 const auth = async (): Promise<string> => {
   const password = prompt("What's the password");
-  const tokenJSON: Response = await jsonFetch("http://localhost:8888/auth", {
+  const tokenJSON: Response = await jsonFetch("/auth", {
     method: "POST",
-    body: JSON.stringify({ password: password })
+    body: JSON.stringify({ password: password }),
   });
   if (tokenJSON.status === 403) {
     return "";
@@ -55,8 +57,8 @@ const authedFetch = async (
       {},
       {
         headers: {
-          [daprTokenName]: token
-        }
+          [daprTokenName]: token,
+        },
       },
       opts
     )

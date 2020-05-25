@@ -3,7 +3,7 @@ import * as frida from "frida";
 
 //import { Session } from "frida/dist/session";
 //import { Script, ScriptMessageHandler } from "frida/dist/script";
-import { defaultTo, memoize } from "lodash";
+import { defaultTo } from "lodash";
 import { User } from "../shared/types/user";
 
 interface Installation {
@@ -22,7 +22,7 @@ export const getFridaSession = (user: User, pid: number): Installation | null =>
 // getFridaScript reads the contents of the frida script
 // and returns it as a string.
 const getFridaScript = async (): Promise<string | null> => {
-  const scriptPath = "./bin/ioctler.js";
+  const scriptPath = "./build/frida.bundle.js";
   return await new Promise((res) =>
     fs.readFile(
       scriptPath,
@@ -44,16 +44,36 @@ const loadScript = async (
   callback: frida.ScriptMessageHandler,
   onAttach: Function
 ): Promise<frida.Script | null> => {
-  const scriptContents = await memoGetFridaScript();
-  if (scriptContents === null) {
+  let scriptContents;
+  try {
+    scriptContents = await getFridaScript();
+    if (scriptContents === null) {
+      return null;
+    }
+  } catch (e) {
+    console.error("Error reading the frida script", e);
     return null;
   }
-  const script = await session.createScript(scriptContents);
-  script.message.connect(callback);
-  await script.load();
-  await script.exports.hook();
-  onAttach();
-  return script;
+
+  let script;
+  try {
+    script = await session.createScript(scriptContents);
+    script.message.connect(callback);
+  } catch (e) {
+    console.error("Error creating the frida script", e);
+    return null;
+  }
+
+  try {
+    await script.load();
+    await script.exports.hook();
+
+    onAttach();
+    return script;
+  } catch (e) {
+    console.error("Error loading the frida script", e);
+    return null;
+  }
 };
 
 // install attaches to the ADB device or the local machine, loads
@@ -117,5 +137,3 @@ export const uninstall = async (installation: Installation): Promise<void> => {
     console.error("Error detaching session", e);
   }
 };
-
-const memoGetFridaScript = memoize(getFridaScript);

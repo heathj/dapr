@@ -33,7 +33,7 @@ export const start = (port: number): HTTPServer => {
   //app.use(corsSettings);
   //app.use(dnsRebinding);
   //app.post("/auth", authenticate);
-  //app.use(isAuthenticated);
+  app.use(isAuthenticated);
   app.get("/procs", getProcs);
   //app.get("/session/status", sessionStatus);
   //app.use("/*", isStatusPending);

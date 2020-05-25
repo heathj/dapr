@@ -21,11 +21,13 @@ const config = (mode) => {
       path: path.join(__dirname, "build"),
       filename: "[name].bundle.js",
     },
+    name: "ui",
     devServer: {
       host: "localhost",
       port: 3000,
       contentBase: "./build",
       writeToDisk: true,
+      hot: true,
       proxy: {
         "/": {
           target: "http://localhost:8888/",
@@ -75,6 +77,7 @@ const config = (mode) => {
     },
   };
   const serverConfig = {
+    name: "server",
     watch: isDevelopment ? true : false,
     devtool: isDevelopment ? "source-map" : "",
     mode: mode,
@@ -116,8 +119,8 @@ const config = (mode) => {
   };
 
   const fridaConfig = {
+    name: "frida",
     watch: isDevelopment ? true : false,
-    devtool: isDevelopment ? "source-map" : "",
     mode: mode,
     target: "node",
     entry: {
@@ -138,11 +141,6 @@ const config = (mode) => {
               onlyCompileBundledFiles: true, // I like this option because it doesn't type check code that isn't used
             },
           },
-        },
-        {
-          enforce: "pre",
-          test: /\.js$/,
-          loader: "source-map-loader",
         },
       ],
     },
