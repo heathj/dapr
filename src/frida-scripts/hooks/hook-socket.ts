@@ -1,5 +1,5 @@
 import { hook } from "./hook";
-import { SyscallType } from "../../shared/types/syscalls";
+import { SyscallType } from "../../shared/types";
 
 export const hookSocket = (libcModule: Module) => {
   hook(libcModule, "socket", {

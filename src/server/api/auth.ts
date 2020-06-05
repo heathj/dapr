@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { memoize } from "lodash";
 import * as fs from "fs";
-import { privKey } from "../../shared/util/keys";
+import { privKey } from "../../shared/keys";
 const getSecretKey = async (): Promise<jwt.Secret | null> =>
-  await new Promise((res) =>
+  await new Promise(res =>
     fs.readFile(privKey, (err: NodeJS.ErrnoException | null, data: Buffer) => {
       if (err !== null) {
         res(null);
@@ -35,8 +35,8 @@ export const authenticate = async (req: Request, res: Response) => {
       JSON.stringify({
         token: jwt.sign({ name: "root" }, secret, {
           algorithm: "RS256",
-          expiresIn: "7d",
-        }),
+          expiresIn: "7d"
+        })
       })
     );
 };

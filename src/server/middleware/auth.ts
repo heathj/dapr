@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 import { memoize } from "lodash";
 import * as fs from "fs";
-import { pubKey } from "../../shared/util/keys";
-import { daprTokenName } from "../../shared/util/token";
-import { User } from "../../shared/types/user";
+import { pubKey } from "../../shared/keys";
+import { daprTokenName } from "../../shared/token";
+import { User } from "../../shared/types";
 
 const getPubKey = async (): Promise<Buffer | null> =>
-  await new Promise((res) =>
+  await new Promise(res =>
     fs.readFile(pubKey, (err: NodeJS.ErrnoException | null, data: Buffer) => {
       if (err !== null) {
         res(null);

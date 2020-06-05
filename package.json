@@ -28,6 +28,7 @@
     "ws": "^7.2.1"
   },
   "devDependencies": {
+    "@types/commander": "^2.12.2",
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.6",
@@ -56,10 +57,14 @@
     "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
-    "start": "npx concurrently 'npm:start-ui' 'npm:start-server' 'npm:start-frida'",
-    "start-ui": "npx webpack-dev-server --config webpack.config.js --config-name ui --mode development",
-    "start-server": "npx webpack --config webpack.config.js --config-name server --mode development",
-    "start-frida": "npx webpack --config webpack.config.js  --config-name frida --mode development",
+    "start":
+      "sudo npx concurrently 'npm:start-ui' 'npm:start-server' 'npm:start-frida'",
+    "start-ui":
+      "npx webpack-dev-server --config webpack.config.js --config-name ui --mode development",
+    "start-server":
+      "npx webpack --config webpack.config.js --config-name server --mode development",
+    "start-frida":
+      "npx webpack --config webpack.config.js  --config-name frida --mode development",
     "build": "npx webpack --config webpack.config.js --mode production"
   }
 }

@@ -1,57 +1,77 @@
 import { hook } from "./hook";
-import { Mode } from "../../shared/types/mode";
-import { SyscallType } from "../../shared/types/syscalls";
-export const hookIoctl = (libcModule: Module) => {
-  hook(libcModule, "ioctl", {
-    onEnter: function(
-      this: InvocationContext,
-      args: InvocationArguments
-    ): void {
-      this.start = new Date().getTime();
-      this.fd = args[0].toInt32();
-      this.request = args[1].toInt32();
-      this.opcode = this.request & 0xff;
-      this.size = (this.request >> 16) & ((1 << 0xe) - 1);
-      this.modebits = (this.request >> 30) & ((1 << 0x2) - 1);
-      switch (this.modebits) {
-        case 0:
-          this.mode = Mode.UNSURE;
-          break;
-        case 1:
-          this.mode = Mode.WRITE;
-          break;
-        case 2:
-          this.mode = Mode.READ;
-          break;
-        case 3:
-          this.mode = Mode.READ_WRITE;
-          break;
-      }
+import { Mode, SyscallType, Syscall } from "../../shared/types";
+import { getSyscallByChannel, createChannel } from "../helpers/channel";
+import { isInterceptorEnabled } from "../helpers/interceptor";
+import { first, filter } from "lodash";
 
-      this.data = null;
-      if (this.size > 0) {
-        this.data = args[2].readByteArray(this.size);
+const myIoctl = (oldIoctl: NativeFunction) => {
+  return (
+    fd: number,
+    request: number,
+    data: NativePointer
+  ): NativeReturnValue => {
+    const size = (request >> 16) & ((1 << 0xe) - 1);
+    let dataCopy = new ArrayBuffer(0);
+    if (size > 0) {
+      const dataBuffer = data.readByteArray(size);
+      if (!dataBuffer) {
+        console.error("Error reading byte array");
+      } else {
+        dataCopy = dataBuffer;
+        console.log("data before", Array.from(new Uint8Array(dataCopy)));
       }
-    },
-    onLeave: function(
-      this: InvocationContext,
-      retval: InvocationReturnValue
-    ): void {
+    }
+
+    let intercepted: Syscall | null = null;
+    if (isInterceptorEnabled()) {
+      const chan = createChannel();
       send(
         {
-          syscall: SyscallType.IOCTL,
-          fd: this.fd,
-          driverName: this.driverName,
-          mode: this.mode,
-          size: this.size,
-          opcode: this.opcode,
-          request: this.request.toString(16),
-          retval: retval.toInt32(),
-          start: this.start,
-          end: new Date().getTime()
+          channel: chan,
+          syscall: {
+            syscall: SyscallType.IOCTL,
+            fd,
+            request
+          }
         },
-        this.data
+        dataCopy
       );
+
+      while (true) {
+        Thread.sleep(0.25);
+        intercepted = getSyscallByChannel(chan);
+        if (intercepted) {
+          break;
+        }
+      }
+      data.writeByteArray(intercepted.data);
+      const newBuff = data.readByteArray(size);
+      if (newBuff) {
+        console.log("data after", Array.from(new Uint8Array(newBuff)));
+      }
     }
-  });
+
+    const resp = oldIoctl(fd, request, data);
+    return resp;
+  };
+};
+
+export const hookIoctl = (libcModule: Module) => {
+  const ioctlPtr = first(
+    filter(libcModule.enumerateExports(), p => p.name === "ioctl")
+  );
+  if (!ioctlPtr) {
+    console.error("Couldn't find ioctl");
+    return;
+  }
+
+  const oldIoctl = new NativeFunction(ioctlPtr.address, "int", [
+    "int",
+    "ulong",
+    "pointer"
+  ]);
+  Interceptor.replace(
+    ioctlPtr.address,
+    new NativeCallback(myIoctl(oldIoctl), "int", ["int", "ulong", "pointer"])
+  );
 };

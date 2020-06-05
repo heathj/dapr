@@ -10,4 +10,8 @@ export const WidthComponent = (comp: any, width: number) => styled(comp)`
   width: ${width}px;
 `;
 
+export const FlexDiv = styled.div`
+  display: flex;
+`;
+
 export const ProcessColumn = WidthComponent(OverflowDiv, 250);

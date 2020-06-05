@@ -15,12 +15,12 @@ export const sendIoctl = (
   libcModuleName: string,
   fd: number,
   request: number,
-  data: ArrayBuffer
+  data: number[]
 ): IoctlResponse => {
   let _data: NativePointer;
 
-  if (data.byteLength !== 0) {
-    _data = Memory.alloc(data.byteLength);
+  if (data.length !== 0) {
+    _data = Memory.alloc(data.length);
     _data.writeByteArray(data);
   } else {
     _data = ptr("0x0");
@@ -33,7 +33,7 @@ export const sendIoctl = (
   const ret = ioctlFunc(fd, request, _data);
 
   let outData: number[] = [];
-  const arrData = _data.readByteArray(data.byteLength);
+  const arrData = _data.readByteArray(data.length);
   if (arrData !== null) {
     const arr = new Uint8Array(arrData);
     outData = Array.prototype.slice.call(arr);

@@ -13,7 +13,7 @@ import { getProcs } from "./api/get-procs";
 //import { sessionStatus } from "./api/session-status";
 import { sessionInstall } from "./api/session-install";
 import { sessionUninstall } from "./api/session-uninstall";
-import { wsHandler } from "./api/websocket";
+
 import { getEvents } from "./api/get-events";
 import { getEvent } from "./api/get-event";
 import { addEvent } from "./api/add-event";
@@ -25,10 +25,13 @@ import { addType } from "./api/add-type";
 import { updateType } from "./api/update-type";
 import { deleteType } from "./api/delete-type";
 import { authenticate } from "./api/auth";
+import { setInterceptor } from "./api/toggle-interceptor";
+import { getNextInterception } from "./api/get-next-interception";
+import { forwardInterception } from "./api/forward-interception";
 
 export const start = (port: number): HTTPServer => {
   const app = express();
-
+  app.set("etag", false);
   app.use(bodyParser.json());
   //app.use(corsSettings);
   //app.use(dnsRebinding);
@@ -65,6 +68,9 @@ export const start = (port: number): HTTPServer => {
   app.put("/types/:id", updateType);
   app.delete("/types/:id/delete", deleteType);
 
+  app.put("/interceptor/set", setInterceptor);
+  app.put("/interceptor/forward", forwardInterception);
+  app.get("/interceptor/next", getNextInterception);
   // not really sure what these are used for
   //import { getTypeAssessments } from "./api/get-type-assessments";
   //import { getTypeAssessment } from "./api/get-type-assessment";
@@ -78,9 +84,9 @@ export const start = (port: number): HTTPServer => {
   //app.post("/typeAssignments/:id/delete", deleteTypeAssignment);
 
   const httpServer = createServer();
-  const wsServer = new WSServer({ server: httpServer });
+
   httpServer.on("request", app);
-  wsServer.on("connection", wsHandler);
+
   return httpServer.listen(port, () => console.log("started!!"));
 };
 

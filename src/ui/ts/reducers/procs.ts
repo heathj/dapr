@@ -1,4 +1,4 @@
-import { Process } from "../../../shared/types/procs";
+import { Process } from "../../../shared/types";
 
 const SET_PROCS = "SET_PROCS";
 const SELECT_PROC = "SELECT_PROC";
@@ -35,29 +35,44 @@ export interface ProcsState {
   procs: Process[];
   selectedProcIDs: number[];
 }
-const defaultState = {
-  procs: [],
-  selectedProcIDs: [],
+const localStorageKey = "procs";
+const getStoredState = (defaultState: ProcsState): ProcsState => {
+  const stateString = localStorage.getItem(localStorageKey);
+  if (!stateString) {
+    return defaultState;
+  }
+  const state: ProcsState = JSON.parse(stateString);
+  if (!state) {
+    return defaultState;
+  }
+  return state;
 };
+const defaultState = getStoredState({
+  procs: [],
+  selectedProcIDs: []
+});
 
 export const procs = (
   state: ProcsState = defaultState,
   action: ProcActionTypes
 ): ProcsState => {
+  let change;
   switch (action.type) {
     case SELECT_PROC:
-      return Object.assign({}, state, {
-        selectedProcIDs: [...state.selectedProcIDs, action.id],
-      });
+      change = { selectedProcIDs: [...state.selectedProcIDs, action.id] };
+      break;
     case DESELECT_PROC:
-      return Object.assign({}, state, {
-        selectedProcIDs: state.selectedProcIDs.filter((id) => id !== action.id),
-      });
+      change = {
+        selectedProcIDs: state.selectedProcIDs.filter(id => id !== action.id)
+      };
+      break;
     case SET_PROCS:
-      return Object.assign({}, state, {
-        procs: action.procs,
-      });
+      change = { procs: action.procs };
+      break;
     default:
-      return state;
+      change = {};
   }
+  const newState: ProcsState = Object.assign({}, state, change);
+  localStorage.setItem(localStorageKey, JSON.stringify(newState));
+  return newState;
 };

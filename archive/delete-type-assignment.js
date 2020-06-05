@@ -1,6 +1,3 @@
-"use strict";
-var _this = this;
-Object.defineProperty(exports, "__esModule", { value: true });
 /*
    # API Definition
    POST /typesAssignments/:id/delete
@@ -11,10 +8,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
    # Path Parameters
    id: Integer        - ID of type assignment
  */
-exports.deleteTypeAssignment = function (req, resp) {
-    var id = parseInt(req.params.id, 10);
-    _this.fridaSession
+export const deleteTypeAssignment = (req, resp) => {
+    const id = parseInt(req.params.id, 10);
+    this.fridaSession
         .typeDelete(id)
-        .then(function () { return resp.send(); })
-        .catch(function (e) { return resp.status(500).send(e.toString()); });
+        .then(() => resp.send())
+        .catch(e => resp.status(500).send(e.toString()));
 };
+//# sourceMappingURL=delete-type-assignment.js.map

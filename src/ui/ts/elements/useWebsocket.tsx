@@ -1,63 +1,42 @@
-import * as React from "react";
-/*
-   export default class WebSocketComp extends React.Component<
-   WebSocketCompProps,
-   {}
-   > {
-   public render() {
-   return <span className="hidden" />;
-   }
-   public componentDidMount() {
-   // When the application loads for the first time, connect to the websocket.
-   this.connectWebsocket();
-   }
-
-   private connectWebsocket() {
-   const websocket = new WebSocket(`ws://${this.props.url}/event-stream`);
-   websocket.onopen = (): void => {
-   console.log("websocket opened");
-   };
-
-   websocket.onmessage = (event: MessageEvent) => {
-   try {
-   const data: Event = JSON.parse(event.data);
-   this.props.addEvent(data);
-   } catch (e) {
-   console.error(e);
-   }
-   };
-
-   websocket.onclose = () => {
-   console.log("websocket closed");
-   //      setTimeout(this.connectWebsocket, 1500);
-   };
-   }
-   }*/
-import { Syscall } from "../../../shared/types/syscalls";
 interface WebSocketClientOptions {
-  onMessage(e: Syscall): void;
+  onMessage(e: MessageEvent): void;
   onClose(): void;
   onError(): void;
 }
-export const useWebSocket = (url: string, options: WebSocketClientOptions) => {
-  let websocket: WebSocket;
+export const useWebSocket = (url: string) => {
+  let websocket: WebSocket | null = null;
   const sendMessage = (message: string) => {
-    if (websocket) {
-      websocket.send(message);
+    if (!websocket) {
+      return;
     }
+    websocket.send(message);
   };
-  React.useEffect(() => {
+  const connect = (options: WebSocketClientOptions) => {
     websocket = new WebSocket(url);
-    websocket.onopen = (): void => {
-      console.log("opened");
+    websocket.onopen = () => {
+      console.log("opened ws");
     };
     websocket.onmessage = (e: MessageEvent) => {
-      const data: Syscall = JSON.parse(e.data);
-      options.onMessage(data);
+      options.onMessage(e);
     };
     websocket.onclose = options.onClose;
     websocket.onerror = options.onError;
-  }, []);
+  };
+  const disconnect = () => {
+    if (!websocket) {
+      return;
+    }
+    websocket.close();
+    websocket = null;
+  };
 
-  return [sendMessage];
+  const toggleConnect = (options: WebSocketClientOptions) => {
+    if (!websocket) {
+      connect(options);
+    } else {
+      disconnect();
+    }
+  };
+
+  return [toggleConnect, sendMessage];
 };

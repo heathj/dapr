@@ -1,5 +1,3 @@
-/*  global Auth */
-
 import * as React from "react";
 
 import {
@@ -8,7 +6,7 @@ import {
   useResizeColumns,
   HeaderGroup,
   TableInstance,
-  ColumnInstance,
+  ColumnInstance
 } from "react-table";
 
 /*import * as thrift from "thrift/lib/nodejs/lib/thrift/browser";
@@ -159,9 +157,17 @@ import {
    );
    };*/
 //import { Event } from "../types/event";
-import ProcessSelector from "./ProcessSelector";
+import { ProcessSelector } from "./ProcessSelector";
+import { Interceptor } from "./Interceptor";
+//import { EventsTable } from "./EventsTable";
+import { FlexDiv } from "./styled/div";
 import { hot } from "react-hot-loader/root";
 export const App = () => {
-  return <ProcessSelector />;
+  return (
+    <FlexDiv>
+      <ProcessSelector />
+      <Interceptor />
+    </FlexDiv>
+  );
 };
 export const HotApp = hot(App);

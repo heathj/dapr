@@ -1,6 +1,6 @@
 import * as program from "commander";
 import { start, quit } from "./server";
-import { genJWTKeys } from "../shared/util/keys";
+import { genJWTKeys } from "../shared/keys";
 import * as process from "process";
 const DEFAULT_PORT = 8888;
 

@@ -1,5 +1,5 @@
 import { first, filter } from "lodash";
-
+import { log } from "../../shared/log";
 export const hook = (
   libcModule: Module,
   exportName: string,
@@ -8,7 +8,7 @@ export const hook = (
   const pointer = first(
     filter(libcModule.enumerateExports(), p => p.name === exportName)
   );
-  console.log("hooking", exportName, libcModule.name, pointer);
+  log("hooking", exportName, libcModule.name, pointer);
   if (!pointer) {
     console.error(`No export named "${exportName}"`);
     return;

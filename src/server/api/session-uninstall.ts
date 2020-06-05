@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
-import { getFridaSession, uninstall } from "../frida-session";
-
+import {
+  getFridaSession,
+  uninstall,
+  removeActiveSession
+} from "../frida-session";
+import { log } from "../../shared/log";
 /*
    # API Definition
    POST /session/detach
@@ -11,6 +15,7 @@ import { getFridaSession, uninstall } from "../frida-session";
    Note: The result of this operation can be checked by polling /session/status.
  */
 export const sessionUninstall = async (req: Request, res: Response) => {
+  log("API session uninstall");
   const { pid } = req.body;
   const { user } = req;
   if (!user) {
@@ -22,6 +27,10 @@ export const sessionUninstall = async (req: Request, res: Response) => {
     res.status(304).end();
     return;
   }
-  await uninstall(installation);
+  const result = await uninstall(installation);
+  if (result) {
+    removeActiveSession(user, pid);
+  }
+
   res.status(200).end();
 };

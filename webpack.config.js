@@ -7,7 +7,7 @@ const srcPath = [__dirname, "src"];
 const tsPath = [...srcPath, "ui", "ts"];
 const htmlPath = [...srcPath, "ui", "html"];
 
-const config = (mode) => {
+const config = mode => {
   const isDevelopment = mode === "development";
   const uiConfig = {
     stats: "errors-warnings",
@@ -15,11 +15,11 @@ const config = (mode) => {
     devtool: isDevelopment ? "source-map" : "",
     mode: mode,
     entry: {
-      ui: path.join(...[...tsPath, "index.tsx"]),
+      ui: path.join(...[...tsPath, "index.tsx"])
     },
     output: {
       path: path.join(__dirname, "build"),
-      filename: "[name].bundle.js",
+      filename: "[name].bundle.js"
     },
     name: "ui",
     devServer: {
@@ -31,16 +31,16 @@ const config = (mode) => {
       proxy: {
         "/": {
           target: "http://localhost:8888/",
-          secure: false,
-        },
-      },
+          secure: false
+        }
+      }
     },
     module: {
       rules: [
         {
           test: /\.css$/,
           exclude: /node_modules/,
-          loader: "css-loader",
+          loader: "css-loader"
         },
         {
           test: /\.ts(x?)$/,
@@ -48,33 +48,33 @@ const config = (mode) => {
           use: {
             loader: "ts-loader",
             options: {
-              onlyCompileBundledFiles: true, // I like this option because it doesn't type check code that isn't used
-            },
-          },
+              onlyCompileBundledFiles: true // I like this option because it doesn't type check code that isn't used
+            }
+          }
         },
         {
           enforce: "pre",
           test: /\.js$/,
-          loader: "source-map-loader",
-        },
-      ],
+          loader: "source-map-loader"
+        }
+      ]
     },
     resolve: { extensions: [".ts", ".tsx", ".js", ".jsx"] },
     plugins: [
       new webpack.DefinePlugin({
-        DEV: isDevelopment,
+        DEV: isDevelopment
       }),
       new HtmlWebpackPlugin({
         template: path.join(...[...htmlPath, "index.html"]),
         favicon: path.join(...[...htmlPath, "favicon.ico"]),
         filename: "index.html",
-        chunks: ["ui"],
-      }),
+        chunks: ["ui"]
+      })
     ],
     externals: {
       react: "React",
-      "react-dom": "ReactDOM",
-    },
+      "react-dom": "ReactDOM"
+    }
   };
   const serverConfig = {
     name: "server",
@@ -83,11 +83,11 @@ const config = (mode) => {
     mode: mode,
     target: "node",
     entry: {
-      server: path.join(...[...srcPath, "server", "index.ts"]),
+      server: path.join(...[...srcPath, "server", "index.ts"])
     },
     output: {
       path: path.join(__dirname, "build"),
-      filename: "[name].bundle.js",
+      filename: "[name].bundle.js"
     },
     module: {
       rules: [
@@ -97,25 +97,25 @@ const config = (mode) => {
           use: {
             loader: "ts-loader",
             options: {
-              onlyCompileBundledFiles: true, // I like this option because it doesn't type check code that isn't used
-            },
-          },
+              onlyCompileBundledFiles: true // I like this option because it doesn't type check code that isn't used
+            }
+          }
         },
         {
           enforce: "pre",
           test: /\.js$/,
-          loader: "source-map-loader",
-        },
-      ],
+          loader: "source-map-loader"
+        }
+      ]
     },
     resolve: { extensions: [".ts", ".tsx", ".js", ".jsx"] },
     plugins: [
       new webpack.DefinePlugin({
-        DEV: isDevelopment,
+        DEV: isDevelopment
       }),
-      new NodemonPlugin({ nodeArgs: ["--inspect=9222"] }),
+      new NodemonPlugin({ nodeArgs: ["--inspect=9222"] })
     ],
-    externals: [nodeExternals()],
+    externals: [nodeExternals()]
   };
 
   const fridaConfig = {
@@ -124,11 +124,11 @@ const config = (mode) => {
     mode: mode,
     target: "node",
     entry: {
-      frida: path.join(...[...srcPath, "frida-scripts", "index.ts"]),
+      frida: path.join(...[...srcPath, "frida-scripts", "index.ts"])
     },
     output: {
       path: path.join(__dirname, "build"),
-      filename: "[name].bundle.js",
+      filename: "[name].bundle.js"
     },
     module: {
       rules: [
@@ -138,18 +138,18 @@ const config = (mode) => {
           use: {
             loader: "ts-loader",
             options: {
-              onlyCompileBundledFiles: true, // I like this option because it doesn't type check code that isn't used
-            },
-          },
-        },
-      ],
+              onlyCompileBundledFiles: true // I like this option because it doesn't type check code that isn't used
+            }
+          }
+        }
+      ]
     },
     resolve: { extensions: [".ts", ".tsx", ".js", ".jsx"] },
     plugins: [
       new webpack.DefinePlugin({
-        DEV: isDevelopment,
-      }),
-    ],
+        DEV: isDevelopment
+      })
+    ]
   };
 
   return [uiConfig, serverConfig, fridaConfig];

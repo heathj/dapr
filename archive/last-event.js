@@ -1,6 +1,3 @@
-"use strict";
-var _this = this;
-Object.defineProperty(exports, "__esModule", { value: true });
 /*
    # API Definition
    GET /last-event
@@ -11,6 +8,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
    # Response Body
    index: Integer
  */
-exports.lastEvent = function (req, res) {
-    res.send({ index: _this.lastEmittedIndex });
-};
+//TODO: not really interested in this call. client should control this
+/*export const lastEvent = (_: Request, res: Response) => {
+  res.send({ index: this.lastEmittedIndex });
+};*/
+//# sourceMappingURL=last-event.js.map

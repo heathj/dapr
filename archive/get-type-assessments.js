@@ -1,6 +1,3 @@
-"use strict";
-var _this = this;
-Object.defineProperty(exports, "__esModule", { value: true });
 /*
    # API Definition
    GET /typesAssignments
@@ -20,9 +17,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
    matcher: Matcher
    typeId: Integer
  */
-exports.getTypeAssessments = function (_, resp) {
-    _this.fridaSession
+export const getTypeAssessments = (_, resp) => {
+    this.fridaSession
         .typeAssignGetAll()
-        .then(function (result) { return resp.send(result); })
-        .catch(function (e) { return resp.status(500).send(e.toString()); });
+        .then(result => resp.send(result))
+        .catch(e => resp.status(500).send(e.toString()));
 };
+//# sourceMappingURL=get-type-assessments.js.map

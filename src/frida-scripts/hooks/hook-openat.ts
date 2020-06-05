@@ -1,6 +1,5 @@
 import { hook } from "./hook";
-import { SyscallType } from "../../shared/types/syscalls";
-import { Mode } from "../../shared/types/mode";
+import { Mode, SyscallType } from "../../shared/types";
 
 export const hookOpenAt = (libcModule: Module) => {
   hook(libcModule, "openat", {

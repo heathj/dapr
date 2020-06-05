@@ -1,19 +1,50 @@
+import { Process, Syscall } from "../../../shared/types";
+import { SyscallChannel } from "../../../frida-scripts/helpers/channel";
+
 export const uninstall = async (pid: number): Promise<Response> =>
   await jsonFetch(`/session/uninstall`, {
     method: "POST",
-    body: JSON.stringify({ pid: pid }),
+    body: JSON.stringify({ pid: pid })
   });
 
-export const install = async (pid: number): Promise<Response> =>
+export const install = async (
+  pid: number,
+  isInterceptorEnabled: boolean = false
+): Promise<Response> =>
   await jsonFetch(`/session/install`, {
     method: "POST",
-    body: JSON.stringify({ pid, adb: false }),
+    body: JSON.stringify({ pid, adb: false, isInterceptorEnabled })
   });
 
-import { Process } from "../../../shared/types/procs";
+export const setInterceptorFetch = async (enabled: boolean): Promise<void> => {
+  await jsonFetch("/interceptor/set", {
+    method: "PUT",
+    body: JSON.stringify({ enabled })
+  });
+};
+
+export const fetchNextInterception = async (): Promise<Syscall> => {
+  const respJSON = await jsonFetch("/interceptor/next");
+  const data: Syscall = await respJSON.json();
+  return data;
+};
+
+export const forwardInterception = async (syscall: Syscall) => {
+  await jsonFetch("/interceptor/forward", {
+    method: "PUT",
+    body: JSON.stringify({ syscall })
+  });
+};
+
 export const fetchCurrentProcesses = async (): Promise<Process[]> => {
   const respJSON = await jsonFetch(`/procs`);
   const data: Process[] = await respJSON.json();
+  return data;
+};
+
+export const fetchEvents = async (): Promise<Syscall[]> => {
+  const respJSON = await jsonFetch("/events");
+  const data: Syscall[] = await respJSON.json();
   return data;
 };
 
@@ -22,7 +53,7 @@ const auth = async (): Promise<string> => {
   const password = prompt("What's the password");
   const tokenJSON: Response = await jsonFetch("/auth", {
     method: "POST",
-    body: JSON.stringify({ password: password }),
+    body: JSON.stringify({ password: password })
   });
   if (tokenJSON.status === 403) {
     return "";
@@ -57,8 +88,8 @@ const authedFetch = async (
       {},
       {
         headers: {
-          [daprTokenName]: token,
-        },
+          [daprTokenName]: token
+        }
       },
       opts
     )

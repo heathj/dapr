@@ -5,10 +5,10 @@ import { hookOpen } from "./hooks/hook-open";
 import { hookOpenAt } from "./hooks/hook-openat";
 import { hookSocket } from "./hooks/hook-socket";
 import { hookOpenGeneric } from "./hooks/hook-open-generic";
-
+import { log } from "../shared/log";
 export const getLibcModules = (): Module[] =>
   filter(Process.enumerateModules(), (m: Module): boolean => {
-    console.log("module names", m.name);
+    log("module names", m.name);
     const matches = m.name.match(/^libc[\.\-]/);
     if (matches === null) {
       return false;
@@ -18,7 +18,7 @@ export const getLibcModules = (): Module[] =>
 
 export const installHooks = (module: Module) => {
   hookIoctl(module);
-  hookClose(module);
+  /* hookClose(module);
   hookOpen(module);
   hookOpenAt(module);
   hookSocket(module);
@@ -30,5 +30,5 @@ export const installHooks = (module: Module) => {
   hookOpenGeneric(module, "eventfd");
   hookOpenGeneric(module, "inotify_init");
   hookOpenGeneric(module, "signalfd");
-  hookOpenGeneric(module, "timerfd_create");
+  hookOpenGeneric(module, "timerfd_create");*/
 };

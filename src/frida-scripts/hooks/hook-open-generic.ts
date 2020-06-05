@@ -1,6 +1,6 @@
 import { hook } from "./hook";
-import { SyscallType } from "../../shared/types/syscalls";
-import { Mode } from "../../shared/types/mode";
+import { Mode, SyscallType } from "../../shared/types";
+
 export const hookOpenGeneric = (
   libcModule: Module,
   hookFunctionName: string

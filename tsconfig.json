@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "sourceMap": true,
-    "target": "es5", // need to target es5 for frida scripts to be read
+    "target": "es5",
     "jsx": "react",
     "lib": ["es6", "dom"]
   }
